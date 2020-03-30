@@ -1,49 +1,72 @@
 <template>
+  <div class="container">
     <div class="container">
-          <div class="container">
-    <div class="row">
-      <div class="col-sm-10">
-        <h1>Tasks</h1>
-        <hr><br><br>
-        <button type="button" class="btn btn-success btn-sm">Add Task</button>
-        <br><br>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">Title</th>
-              <th scope="col">Severity Rating</th>
-              <th scope="col">Start Date</th>
-              <th scope="col">End Date</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Draft Digital Compaign</td>
-              <td>5</td>
-              <td>12/03/2020</td>
-              <td>
-                <div class="btn-group" role="group">
-                  <button type="button" class="btn btn-warning btn-sm">Update</button>
-                  <button type="button" class="btn btn-danger btn-sm">Delete</button>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>User Reserch</td>
-              <td>2</td>
-              <td>12/03/2020</td>
-              <td>
-                <div class="btn-group" role="group">
-                  <button type="button" class="btn btn-warning btn-sm">Update</button>
-                  <button type="button" class="btn btn-danger btn-sm">Delete</button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="row">
+        <div class="col-sm-10">
+          <h1>Tasks</h1>
+          <hr />
+          <br /><br />
+          <button type="button" class="btn btn-success btn-sm">Add Task</button>
+          <br /><br />
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Severity Rating</th>
+                <th scope="col">Start Date</th>
+                <th scope="col">End Date</th>
+                <th scope="col">Status?</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(task, index) in tasks" :key="index">
+                <td>{{ task.title }}</td>
+                <td>{{ task.severity }}</td>
+                <td>{{ task.start }}</td>
+                <td>{{ task.end }}</td>
+                <td>
+                  <span v-if="task.done">Complete</span>
+                  <span v-else-if="task.pending">Pending</span>
+                  <span v-else>Overdue</span>
+                </td>
+                <td>
+                  <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-warning btn-sm">Update</button>
+                    <button type="button" class="btn btn-danger btn-sm">Delete</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
-    </div>
 </template>
+<script>
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
+      tasks: [],
+    };
+  },
+  methods: {
+    getTasks() {
+      const path = 'http://localhost:5000/tasks';
+      axios.get(path)
+        .then((res) => {
+          this.tasks = res.data.tasks;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+  },
+  created() {
+    this.getTasks();
+  },
+};
+</script>
