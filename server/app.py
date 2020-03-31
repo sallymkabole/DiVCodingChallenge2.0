@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 TASKS = [
@@ -33,12 +33,21 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 def ping_pong():
     return jsonify('pong!')
 
-@app.route('/tasks', methods=['GET'])
+@app.route('/tasks', methods=['GET','POST'])
 def all_tasks():
-    return jsonify({
-        'status':'success',
-        'tasks':TASKS
-    })
+    respose_object={'status':'success'}
+    if request.method =='POST':
+        post_data = request.get_json()
+        TASKS.append({
+            'title':post_data.get('title'),
+            'severity':post_data.get('severity'),
+            'start':post_data.get('start'),
+            'end':post_data.get('end'),
+            'done':post_data.get('done'),
+        })
+    else:
+        respose_object['tasks'] =TASKS
+    return jsonify(respose_object)
 
 
 if __name__ == '__main__':
